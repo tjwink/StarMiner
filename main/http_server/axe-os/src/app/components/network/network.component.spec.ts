@@ -5,7 +5,6 @@ import { NetworkEditComponent } from '../network-edit/network.edit.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { DialogService } from 'src/app/services/dialog.service';
-import { DialogService as PrimeDialogService } from 'primeng/dynamicdialog';
 
 describe('NetworkComponent', () => {
   let component: NetworkComponent;
@@ -13,8 +12,8 @@ describe('NetworkComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [NetworkComponent, NetworkEditComponent],
-      providers: [provideHttpClient(), provideToastr(), DialogService, PrimeDialogService]
+      imports: [NetworkComponent, NetworkEditComponent],
+      providers: [provideHttpClient(), provideToastr(), DialogService]
     });
     fixture = TestBed.createComponent(NetworkComponent);
     component = fixture.componentInstance;
@@ -25,3 +24,4 @@ describe('NetworkComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

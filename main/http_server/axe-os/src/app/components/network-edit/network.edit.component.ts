@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { getHttpErrorMessage } from 'src/app/utils/error-handler';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -11,11 +12,15 @@ import { SystemApiService } from 'src/app/services/system.service';
 import { WifiNetwork } from 'src/app/generated/models';
 import { first } from 'rxjs/operators';
 import { ISystemUpdateResponse } from 'src/models/ISystemUpdateResponse';
+import { TooltipTextIconComponent } from '../tooltip-text-icon/tooltip-text-icon.component';
+import { TooltipDirective } from '../../directives/tooltip.directive';
+import { CheckboxComponent } from '../checkbox/checkbox.component';
 
 @Component({
   selector: 'app-network-edit',
   templateUrl: './network.edit.component.html',
-  styleUrls: ['./network.edit.component.scss']
+  styleUrls: ['./network.edit.component.scss'],
+  imports: [FormsModule, ReactiveFormsModule, TooltipTextIconComponent, TooltipDirective, CheckboxComponent]
 })
 export class NetworkEditComponent implements OnInit {
   private formSubject = new BehaviorSubject<FormGroup | null>(null);
@@ -46,6 +51,7 @@ export class NetworkEditComponent implements OnInit {
           hostname: [info.hostname, [Validators.required]],
           ssid: [info.ssid, [Validators.required]],
           wifiPass: ['*****'],
+          useNTP: [info.useNTP],
         });
         this.formSubject.next(this.form);
       });
@@ -108,7 +114,7 @@ export class NetworkEditComponent implements OnInit {
           this.form.markAsPristine();
         },
         error: (err: HttpErrorResponse) => {
-          this.toastr.error(`Could not save. ${err.message}`);
+          this.toastr.error(`Could not save. ${getHttpErrorMessage(err, this.uri)}`);
           this.savedChanges = restartAlreadyPending;
         }
       });
@@ -175,7 +181,7 @@ export class NetworkEditComponent implements OnInit {
           this.savedChanges = false;
         },
         error: (err: HttpErrorResponse) => {
-          this.toastr.error(`Could not restart. ${err.message}`);
+          this.toastr.error(`Could not restart. ${getHttpErrorMessage(err, this.uri)}`);
         }
       });
   }
